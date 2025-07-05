@@ -1,5 +1,5 @@
-# Wazuh - Sophos Integration
-This repository provides a complete integration between Wazuh (SIEM and XDR platform) and Sophos Firewall, supporting both the Central Reporting Format (CRF) and Standard Syslog Protocol. It includes custom decoders, rules, and MITRE ATT&CK mappings to detect and alert on Sophos security events such as:
+# Sophos - Wazuh Integration
+This repository provides a complete integration between Sophos Firewall, and Wazuh (SIEM and XDR platform) supporting both the Central Reporting Format (CRF) and Standard Syslog Protocol. It includes custom decoders, rules, and MITRE ATT&CK mappings to detect and alert on Sophos security events such as:
 
 ➕ Web filtering violations
 
