@@ -1,0 +1,179 @@
+<!--
+  - Sophos Firewall CRF Syslog Rules for Wazuh
+  - Developed by Luai Ehsan
+  - MITRE ATT&CK techniques mapped where relevant
+  - 📚 Reference: https://docs.sophos.com/nsg/sophos-firewall/20.0/pdf/sf-syslog-guide-20.0.pdf
+-->
+
+<group name="sophos_fw_ng">
+    <!-- Base decoder match -->
+    <rule id="113800" level="0">
+        <decoded_as>sophos-fw-ng</decoded_as>
+        <description>🧱 Base rule for Sophos Firewall event decoding</description>
+    </rule>
+
+    <!-- 🛑 Web Filtering -->
+    <rule id="113862" level="7">
+        <if_sid>113800</if_sid>
+        <field name="log_type">Content Filtering</field>
+        <field name="log_subtype">Denied</field>
+        <description>🚫 Web Policy Violation on Sophos Firewall</description>
+        <mitre><id>T1567.002</id></mitre>
+    </rule>
+
+    <!-- 🔐 CLI login failures -->
+    <rule id="113863" level="8">
+        <if_sid>113800</if_sid>
+        <field name="log_component">CLI</field>
+        <field name="log_type">Event</field>
+        <field name="sophos_fw_status">Failed</field>
+        <description>🧑‍💻 Failed CLI Login (SSH) on Sophos Firewall</description>
+        <mitre><id>T1110</id></mitre>
+    </rule>
+
+    <!-- 🔐 SSL VPN Authentication Failed -->
+    <rule id="113864" level="8">
+        <if_sid>113800</if_sid>
+        <field name="log_component">SSL VPN Authentication</field>
+        <field name="log_type">Event</field>
+        <field name="sophos_fw_status">Failed</field>
+        <description>🛡️ Failed SSL VPN Login on Sophos Firewall</description>
+        <mitre><id>T1133</id></mitre>
+    </rule>
+
+    <!-- 🦠 Web Anti-Virus -->
+    <rule id="113870" level="10">
+        <if_sid>113800</if_sid>
+        <field name="log_type">Anti-Virus</field>
+        <field name="log_component">HTTP</field>
+        <field name="log_subtype">Virus</field>
+        <description>🦠 Virus Detected in HTTP Traffic</description>
+        <mitre><id>T1059</id></mitre>
+    </rule>
+
+    <rule id="113871" level="10">
+        <if_sid>113800</if_sid>
+        <field name="log_type">Anti-Virus</field>
+        <field name="log_component">HTTPS</field>
+        <field name="log_subtype">Virus</field>
+        <description>🦠 Virus Detected in HTTPS Traffic</description>
+        <mitre><id>T1059</id></mitre>
+    </rule>
+
+    <!-- 📥 FTP AV Detection -->
+    <rule id="113872" level="10">
+        <if_sid>113800</if_sid>
+        <field name="log_type">Anti-Virus</field>
+        <field name="log_component">FTP</field>
+        <field name="log_subtype">Virus</field>
+        <description>📥 FTP Virus Upload/Download Detected</description>
+        <mitre><id>T1105</id></mitre>
+    </rule>
+
+    <!-- 📧 Email AV -->
+    <rule id="113873" level="10">
+        <if_sid>113800</if_sid>
+        <field name="log_type">Anti-Virus</field>
+        <field name="log_component">SMTP</field>
+        <field name="log_subtype">Virus</field>
+        <description>📧 Email Virus Detected on SMTP</description>
+        <mitre><id>T1566.001</id></mitre>
+    </rule>
+
+    <!-- 🚨 Anti-Spam -->
+    <rule id="113874" level="7">
+        <if_sid>113800</if_sid>
+        <field name="log_type">Anti-Spam</field>
+        <field name="log_component">SMTP</field>
+        <field name="log_subtype">Spam</field>
+        <description>🛑 Spam Email Quarantined</description>
+        <mitre><id>T1566</id></mitre>
+    </rule>
+
+    <!-- 🚫 Application Control -->
+    <rule id="113875" level="6">
+        <if_sid>113800</if_sid>
+        <field name="log_type">Content Filtering</field>
+        <field name="log_component">Application</field>
+        <field name="log_subtype">Denied</field>
+        <description>🚷 Blocked Application: $(app_name)</description>
+        <mitre><id>T1218</id></mitre>
+    </rule>
+
+    <!-- 🌐 SSL VPN Session Established -->
+    <rule id="113876" level="5">
+        <if_sid>113800</if_sid>
+        <field name="log_component">SSL VPN</field>
+        <field name="log_subtype">System</field>
+        <field name="sophos_fw_status">Established</field>
+        <description>🔌 SSL VPN Session Established</description>
+        <mitre><id>T1133</id></mitre>
+    </rule>
+
+    <!-- 💥 IPS Alert -->
+    <rule id="113877" level="10">
+        <if_sid>113800</if_sid>
+        <field name="log_type">IPS</field>
+        <field name="log_subtype">Alert</field>
+        <description>💣 IPS Alert: Potential Exploit Attempt</description>
+        <mitre><id>T1203</id></mitre>
+    </rule>
+
+    <!-- 🚨 ATP Alert -->
+    <rule id="113878" level="10">
+        <if_sid>113800</if_sid>
+        <field name="log_type">ATP</field>
+        <field name="log_subtype">Alert</field>
+        <description>🧠 ATP Alert: $(malware) from $(src_ip)</description>
+        <mitre><id>T1040</id></mitre>
+    </rule>
+
+    <!-- 🔥 Firewall Events -->
+    <rule id="113801" level="5">
+        <if_sid>113800</if_sid>
+        <field name="log_type">Firewall</field>
+        <field name="log_subtype">Denied</field>
+        <description>⛔ Firewall Denied Connection from $(src_ip) to $(dst_ip)</description>
+        <mitre><id>T1040</id></mitre>
+    </rule>
+
+    <rule id="113802" level="3">
+        <if_sid>113800</if_sid>
+        <field name="log_type">Firewall</field>
+        <field name="log_subtype">Allowed</field>
+        <description>✅ Firewall Allowed Connection from $(src_ip) to $(dst_ip)</description>
+        <mitre><id>T1071</id></mitre>
+    </rule>
+
+    <rule id="113803" level="6">
+        <if_sid>113800</if_sid>
+        <field name="log_type">Firewall</field>
+        <field name="log_subtype">Drop</field>
+        <description>🧱 Firewall Dropped Connection from $(src_ip) to $(dst_ip)</description>
+        <mitre><id>T1040</id></mitre>
+    </rule>
+
+    <!-- 🔐 Authentication Events -->
+    <rule id="113820" level="5">
+        <if_sid>113800</if_sid>
+        <field name="log_subtype">Authentication</field>
+        <field name="log_component">Firewall Authentication</field>
+        <description>🔐 Auth Event: $(message)</description>
+        <mitre><id>T1078</id></mitre>
+    </rule>
+
+    <!-- ⚙️ System Events -->
+    <rule id="113840" level="3">
+        <if_sid>113800</if_sid>
+        <field name="log_component">DDNS</field>
+        <description>🔄 DDNS Update Event: $(message)</description>
+        <mitre><id>T1583.001</id></mitre>
+    </rule>
+
+    <rule id="113841" level="3">
+        <if_sid>113800</if_sid>
+        <field name="log_component">DHCP</field>
+        <description>📡 DHCP Lease Event: $(message)</description>
+        <mitre><id>T1200</id></mitre>
+    </rule>
+</group>
