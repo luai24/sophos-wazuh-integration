@@ -79,3 +79,5 @@ This guide walks you through integrating Sophos Firewall with Wazuh for advanced
 🔄 Restart the manager: `sudo systemctl restart wazuh-manager`
 
 🧪 Test it: `sudo /var/ossec/bin/wazuh-logtest`
+
+Special thanks to JoernSchoenyan for providing the decoders!
